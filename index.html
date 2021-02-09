@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Counties of the United States</title>
+    <link rel="stylesheet" href="stylesheet.css">
+    <script src='index.js' defer></script> 
+  </head>
+  <body>
+    <h1>🇺🇸 Counties of the United States 🇺🇸</h1>
+    <table><tr>
+      <td>
+        <form id="search">
+          <label for="filter">Search by:</label>
+          <select name="filter" id="filter">
+            <option name="anything" value="q">Anything</option>
+            <option name="state" value="state">State</option>
+            <option name="name" value="name">Name</option>
+            <option name="type" value="type">Type</option>
+          </select>
+          <input type="text" name="query" id="query" placeholder="search...">
+          <label for="limit">Limit:</label>
+          <select name="limit" id="limit">
+            <option name="ten" value="10">10</option>
+            <option name="twenty-five" value="25">25</option>
+            <option name="fifty" value="50">50</option>
+          </select>
+          <input type="submit" value="Search">
+        </form>
+      </td>
+    </tr></table>
+    <hr />
+    <table id='counties'></table>
+    <hr />
+    <table id="pagination-control"><tr>
+        <td><button id="first">⇇</button></td>
+        <td><button id="back">←</button></td>
+        <td><div id="page-number" ></div></td>
+        <td><button id="forward">→</button></td>
+        <td><button id="last">⇉</button></td>
+    </tr></table>
+  </body>
+</html>

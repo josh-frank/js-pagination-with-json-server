@@ -1,0 +1,19 @@
+* {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+#counties {
+    border: 1px solid;
+    border-collapse: collapse;
+}
+
+.county-row {
+    border: 1px solid;
+    padding: 0.5rem;
+}
+
+.county-cell {
+    padding: 0.5rem;
+}
