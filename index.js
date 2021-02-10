@@ -2,8 +2,19 @@ let apiUrl = "http://localhost:3000/us-counties"
 let currentUrl = "http://localhost:3000/us-counties?_limit=20&_page=1"
 const tableOfCounties = document.getElementById( "counties" );
 
+// Another way to parse link headers - depraved and unspeakable, but only one line
+// function parseLinkHeader( linkHeader ) {
+//     return Object.fromEntries( linkHeader.split( ", " ).map( header => header.split( "; " ) ).map( header => [ header[1].replace( /"/g, "" ).replace( "rel=", "" ), header[0].slice( 1, -1 ) ] ) );
+// }
+
 function parseLinkHeader( linkHeader ) {
-    return Object.fromEntries( linkHeader.split( ", " ).map( header => header.split( "; " ) ).map( header => [ header[1].replace( /"/g, "" ).replace( "rel=", "" ), header[0].slice( 1, -1 ) ] ) );
+    const linkHeadersArray = linkHeader.split( ", " ).map( header => header.split( "; " ) );
+    const linkHeadersMap = linkHeadersArray.map( header => {
+        const thisHeaderRel = header[1].replace( /"/g, "" ).replace( "rel=", "" );
+        const thisHeaderUrl = header[0].slice( 1, -1 );
+        return [ thisHeaderRel, thisHeaderUrl ]
+    } );
+    return Object.fromEntries( linkHeadersMap );
 }
 
 function parseRoute( url ) {
@@ -37,6 +48,17 @@ function renderCounty( county ) {
     countyRow.append( countyName, countyPopulation );
     tableOfCounties.append( countyRow );
 }
+
+// Paginating without handing short API responses
+// function paginate( direction ) {
+//     fetch( currentUrl ).then( response => {
+//         let linkHeaders = parseLinkHeader( response.headers.get( "Link" ) );
+//         if ( !!linkHeaders[ direction ] ) {
+//             currentUrl = linkHeaders[ direction ];
+//             fetchCounties( linkHeaders[ direction ] );
+//         }
+//     } );
+// }
 
 function paginate( direction ) {
     fetch( currentUrl ).then( response => {
