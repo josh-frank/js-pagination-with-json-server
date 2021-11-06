@@ -3,11 +3,9 @@ let currentUrl = "http://localhost:3000/us-counties?_limit=20&_page=1"
 const tableOfCounties = document.getElementById( "counties" );
 
 // Another way to parse link headers - depraved and unspeakable, but only one line
-// function parseLinkHeader( linkHeader ) {
-//     return Object.fromEntries( linkHeader.split( ", " ).map( header => header.split( "; " ) ).map( header => [ header[1].replace( /"/g, "" ).replace( "rel=", "" ), header[0].slice( 1, -1 ) ] ) );
-// }
+// const parseLinkHeader = linkHeader =>  Object.fromEntries( linkHeader.split( ", " ).map( header => header.split( "; " ) ).map( header => [ header[1].replace( /"/g, "" ).replace( "rel=", "" ), header[0].slice( 1, -1 ) ] ) );
 
-function parseLinkHeader( linkHeader ) {
+const parseLinkHeader = linkHeader => {
     const linkHeadersArray = linkHeader.split( ", " ).map( header => header.split( "; " ) );
     const linkHeadersMap = linkHeadersArray.map( header => {
         const thisHeaderRel = header[1].replace( /"/g, "" ).replace( "rel=", "" );
@@ -17,13 +15,12 @@ function parseLinkHeader( linkHeader ) {
     return Object.fromEntries( linkHeadersMap );
 }
 
-function parseRoute( url ) {
-    return Object.fromEntries( url.replace( `${ apiUrl }?`, "" ).split( "&" ).map( attribute => [ attribute.split( "=" )[ 0 ].slice( 1 ), attribute.split( "=" )[ 1 ] ] ) );
-}
+const parseRoute = url => Object.fromEntries( url.replace( `${ apiUrl }?`, "" ).split( "&" ).map( attribute => [ attribute.split( "=" )[ 0 ].slice( 1 ), attribute.split( "=" )[ 1 ] ] ) );
 
-function pageNumber( url ) { return !parseRoute( url ).page ? 1 : parseRoute( url ).page }
+// const pageNumber = url => !parseRoute( url ).page ? 1 : parseRoute( url ).page;
+const pageNumber = url => parseRoute( url ).page || 1;
 
-function fetchCounties( url ) {
+const fetchCounties = url => {
     tableOfCounties.innerHTML = `<tr id="header"><th>Name</th><th>Population</th></tr>`;
     fetch( url )
         .then( response => response.json().then( data => [ data, response.headers.get( "Link" ) ] ) )
@@ -36,7 +33,7 @@ function fetchCounties( url ) {
         } );
 }
 
-function renderCounty( county ) {
+const renderCounty = county => {
     let countyRow = document.createElement( "tr" );
     countyRow.classList.add( "county-row" );
     let countyName = document.createElement( "td" );
@@ -50,7 +47,7 @@ function renderCounty( county ) {
 }
 
 // Paginating without handing short API responses
-// function paginate( direction ) {
+// const paginate = direction => {
 //     fetch( currentUrl ).then( response => {
 //         let linkHeaders = parseLinkHeader( response.headers.get( "Link" ) );
 //         if ( !!linkHeaders[ direction ] ) {
@@ -60,7 +57,7 @@ function renderCounty( county ) {
 //     } );
 // }
 
-function paginate( direction ) {
+const paginate = direction => {
     fetch( currentUrl ).then( response => {
         let linkHeaders = response.headers.get( "Link" );
         if ( linkHeaders ) {
@@ -73,7 +70,7 @@ function paginate( direction ) {
     } );
 }
 
-function searchCounties( searchFormSubmission ) {
+const searchCounties = searchFormSubmission => {
     searchFormSubmission.preventDefault();
     currentUrl = `http://localhost:3000/us-counties?${ searchFormSubmission.target.elements.filter.value }=${ searchFormSubmission.target.elements.query.value }&_limit=${ searchFormSubmission.target.elements.limit.value }&_page=1`;
     fetchCounties( currentUrl );
@@ -82,8 +79,8 @@ function searchCounties( searchFormSubmission ) {
 document.addEventListener( "DOMContentLoaded", () => {
     fetchCounties( currentUrl );
     document.getElementById( 'search' ).addEventListener( 'submit', searchCounties );
-    document.getElementById( 'first' ).addEventListener( 'click', () => { paginate( "first" ) } );
-    document.getElementById( 'back' ).addEventListener( 'click', () => { paginate( "prev" ) } );
-    document.getElementById( 'forward' ).addEventListener( 'click', () => { paginate( "next" ) } );
-    document.getElementById( 'last' ).addEventListener( 'click', () => { paginate( "last" ) } );
+    document.getElementById( 'first' ).addEventListener( 'click', () => paginate( "first" ) );
+    document.getElementById( 'back' ).addEventListener( 'click', () => paginate( "prev" ) );
+    document.getElementById( 'forward' ).addEventListener( 'click', () => paginate( "next" ) );
+    document.getElementById( 'last' ).addEventListener( 'click', () => paginate( "last" ) );
 } );
